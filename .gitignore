@@ -1,0 +1,30 @@
+# IDE
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+
+# Docker local data
+*.pid
+
+# Java
+*.class
+out/
+target/
+
+# IntelliJ generated
+.vscode/
