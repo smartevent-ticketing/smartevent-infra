@@ -1,11 +1,17 @@
 # IDE
 .idea/
 *.iml
+.vscode/
 
 # Gradle
 .gradle/
 build/
 **/build/
+
+# Java
+*.class
+out/
+target/
 
 # Logs
 *.log
@@ -14,17 +20,13 @@ build/
 .DS_Store
 Thumbs.db
 
-# Env
+# Env files
 .env
 .env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
 
-# Docker local data
+# Docker local
 *.pid
-
-# Java
-*.class
-out/
-target/
-
-# IntelliJ generated
-.vscode/
