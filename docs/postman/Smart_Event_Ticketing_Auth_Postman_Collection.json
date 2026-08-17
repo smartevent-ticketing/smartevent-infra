@@ -1,8 +1,8 @@
 {
 	"info": {
 		"_postman_id": "7f8b9e1a-5d2c-4f3e-9a1b-8c2d3e4f5a6b",
-		"name": "Smart Event Ticketing Platform - Module Identity & Auth",
-		"description": "Bộ Postman Collection hoàn chỉnh kiểm thử toàn bộ API Module Identity & Authentication (Register, Login, Token Rotation, Profile, Logout, Error Scenarios). Có sẵn script tự động bắt và lưu Access Token, Refresh Token vào Environment.",
+		"name": "Smart Event Ticketing Platform - Identity, Auth & Storage",
+		"description": "Bộ Postman Collection hoàn chỉnh kiểm thử toàn bộ API Module Identity, Authentication & Storage (MinIO). Có sẵn script tự động bắt và lưu Access Token, Refresh Token, File ID vào Environment.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -239,10 +239,182 @@
 			]
 		},
 		{
-			"name": "02. Error & Security Test Cases",
+			"name": "02. Storage Module (MinIO)",
 			"item": [
 				{
-					"name": "2.1. Đăng nhập sai mật khẩu (401 INVALID_CREDENTIALS)",
+					"name": "1. Tải file lên (Upload Multipart - Auto save fileId)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data) {",
+									"    pm.environment.set(\"currentFileId\", jsonData.data.id);",
+									"    console.log(\"✅ Đã tự động lưu currentFileId vào Environment:\", jsonData.data.id);",
+									"}",
+									"pm.test(\"Tải file lên thành công trả về 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"    pm.expect(jsonData.data.id).to.be.a('string');",
+									"    pm.expect(jsonData.data.url).to.be.a('string');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "folder",
+									"value": "avatars",
+									"type": "text"
+								},
+								{
+									"key": "visibility",
+									"value": "PUBLIC",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/storage/upload",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"storage",
+								"upload"
+							]
+						},
+						"description": "Tải file ảnh (avatar/banner) lên MinIO. Cần chọn một file bất kỳ trong phần Body -> form-data -> file. Khi upload thành công, script sẽ tự động lưu `currentFileId` vào Environment."
+					},
+					"response": []
+				},
+				{
+					"name": "2. Lấy Presigned URL (15 phút)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Lấy Presigned URL thành công trả về 200 OK\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"    pm.expect(jsonData.data.url).to.be.a('string');",
+									"    pm.expect(jsonData.data.expiresAt).to.be.a('string');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/storage/{{currentFileId}}/presigned-url",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"storage",
+								"{{currentFileId}}",
+								"presigned-url"
+							]
+						},
+						"description": "Lấy link tải tạm thời (có chữ ký bảo mật 15 phút) cho file riêng tư `{{currentFileId}}`."
+					},
+					"response": []
+				},
+				{
+					"name": "3. Xóa file (Delete File)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Xóa file thành công trả về 200 OK\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/storage/{{currentFileId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"storage",
+								"{{currentFileId}}"
+							]
+						},
+						"description": "Xóa file vật lý trên MinIO và bản ghi metadata trong PostgreSQL."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "03. Error & Security Test Cases",
+			"item": [
+				{
+					"name": "3.1. Đăng nhập sai mật khẩu (401 INVALID_CREDENTIALS)",
 					"event": [
 						{
 							"listen": "test",
@@ -287,7 +459,7 @@
 					"response": []
 				},
 				{
-					"name": "2.2. Đăng ký email bị trùng lặp (400 DUPLICATE_EMAIL)",
+					"name": "3.2. Đăng ký email bị trùng lặp (400 DUPLICATE_EMAIL)",
 					"event": [
 						{
 							"listen": "test",
@@ -332,7 +504,7 @@
 					"response": []
 				},
 				{
-					"name": "2.3. Gọi API bảo mật không kèm Token (401 UNAUTHORIZED)",
+					"name": "3.3. Gọi API bảo mật không kèm Token (401 UNAUTHORIZED)",
 					"event": [
 						{
 							"listen": "test",
@@ -368,7 +540,7 @@
 					"response": []
 				},
 				{
-					"name": "2.4. Gọi API với Token giả mạo hoặc sai chữ ký (401 UNAUTHORIZED)",
+					"name": "3.4. Gọi API với Token giả mạo hoặc sai chữ ký (401 UNAUTHORIZED)",
 					"event": [
 						{
 							"listen": "test",
