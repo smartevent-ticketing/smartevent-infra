@@ -143,7 +143,10 @@ src/test/java/com/smartevent/modules/ticketing/service/
 1. **Ownership & State Guard:** Chỉ cho phép Organizer sở hữu sự kiện (hoặc ADMIN) chỉnh sửa, và chỉ khi sự kiện ở trạng thái `DRAFT` hoặc `PENDING_APPROVAL`.
 2. **Time Guard:** Kiểm tra `request.saleEndAt().isAfter(request.saleStartAt())`.
 3. **Capacity Guard:** Kiểm tra `sumQuantityByEventAreaIdExcluding(...) + request.quantity() <= area.getCapacity()`.
-4. **State Machine Transitions:**
+4. **Tích hợp Tồn kho (`InventoryService`):**
+   - Tự động gọi `inventoryService.initCounter(...)` ngay sau khi tạo thành công Đợt mở bán.
+   - Gọi `inventoryService.updateTotalQuantity(...)` khi Organizer thay đổi số lượng vé của phase.
+5. **State Machine Transitions:**
    ```
    DRAFT -> SCHEDULED | ACTIVE
    SCHEDULED -> ACTIVE | CLOSED
