@@ -50,7 +50,7 @@ dependencies {
 
 ### 3.1. Nội Dung Cấu Hình
 
-Trong file [`application.yml`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/resources/application.yml), nhóm cấu hình `app.jwt` được bổ sung như sau:
+Trong file [`application.yml`](../../ticketing/src/main/resources/application.yml), nhóm cấu hình `app.jwt` được bổ sung như sau:
 
 ```yaml
 app:

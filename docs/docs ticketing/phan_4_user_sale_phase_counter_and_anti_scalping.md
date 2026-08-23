@@ -34,7 +34,7 @@ Trong các concert âm nhạc và trận đấu thể thao đỉnh cao, **vấn 
 
 ## 🗃️ 2. Lược Đồ Database (`user_sale_phase_counters`)
 
-Được định nghĩa trong Flyway Migration [`V5__ticketing_schema.sql`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/resources/db/migration/V5__ticketing_schema.sql):
+Được định nghĩa trong Flyway Migration [`V5__ticketing_schema.sql`](../../ticketing/src/main/resources/db/migration/V5__ticketing_schema.sql):
 
 ```sql
 CREATE TABLE user_sale_phase_counters (
@@ -165,7 +165,7 @@ int atomicHoldUserQuantity(
 
 ## 🧪 6. Kết Quả Kiểm Thử Unit Test (Mockito 100%)
 
-Toàn bộ **10 Test Cases** trong [`UserSalePhaseCounterServiceTest.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/test/java/com/smartevent/modules/ticketing/service/UserSalePhaseCounterServiceTest.java) đều đạt kết quả **PASSED**:
+Toàn bộ **10 Test Cases** trong [`UserSalePhaseCounterServiceTest.java`](../../ticketing/src/test/java/com/smartevent/modules/ticketing/service/UserSalePhaseCounterServiceTest.java) đều đạt kết quả **PASSED**:
 - ✅ `getUserCounter_WhenExists_ReturnsResponse`
 - ✅ `getUserCounter_WhenNotExists_ReturnsDefaultZero`
 - ✅ `holdUserTickets_WhenMaxPerUserNull_SkipsCheck`

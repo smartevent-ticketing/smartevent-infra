@@ -48,7 +48,7 @@ flowchart TD
 
 ## 🗃️ 3. Chi Tiết Lược Đồ Database & `FileEntity`
 
-Bảng `files` được quản lý bởi Flyway Migration [`V3__storage_schema.sql`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/resources/db/migration/V3__storage_schema.sql):
+Bảng `files` được quản lý bởi Flyway Migration [`V3__storage_schema.sql`](../../ticketing/src/main/resources/db/migration/V3__storage_schema.sql):
 
 ```sql
 CREATE TABLE files (

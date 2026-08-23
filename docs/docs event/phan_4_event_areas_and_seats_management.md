@@ -53,7 +53,7 @@ flowchart TD
 
 ## 🗃️ 2. Lược Đồ Database (`event_areas` & `event_seats`)
 
-Được quản lý bởi Flyway Migration [`V4__event_schema.sql`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/resources/db/migration/V4__event_schema.sql):
+Được quản lý bởi Flyway Migration [`V4__event_schema.sql`](../../ticketing/src/main/resources/db/migration/V4__event_schema.sql):
 
 ```sql
 -- 1. Bảng Khu vực vé (Areas)
@@ -158,7 +158,7 @@ Gọi eventSeatRepository.saveAll(seats) để lưu toàn bộ 100 ghế vào DB
 
 ## 🔍 6. Logic Nghiệp Vụ Repositories Cốt Lõi
 
-### 🔹 1. Tính tổng sức chứa trong [`EventAreaRepository.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/repository/EventAreaRepository.java)
+### 🔹 1. Tính tổng sức chứa trong [`EventAreaRepository.java`](../../ticketing/src/main/java/com/smartevent/modules/event/repository/EventAreaRepository.java)
 Đảm bảo tổng số vé của tất cả các khán đài không vượt quá sức chứa SVĐ Mỹ Đình (40,000 người):
 ```java
 @Query("""
@@ -169,7 +169,7 @@ Gọi eventSeatRepository.saveAll(seats) để lưu toàn bộ 100 ghế vào DB
 int sumCapacityByEventIdExcluding(@Param("eventId") UUID eventId, @Param("excludeAreaId") UUID excludeAreaId);
 ```
 
-### 🔹 2. Thống kê & Lọc ghế trong [`EventSeatRepository.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/repository/EventSeatRepository.java)
+### 🔹 2. Thống kê & Lọc ghế trong [`EventSeatRepository.java`](../../ticketing/src/main/java/com/smartevent/modules/event/repository/EventSeatRepository.java)
 * `findByEventAreaIdOrderByRowNameAscSeatNumberAsc(...)`: Vẽ ma trận ghế trên giao diện chọn chỗ.
 * `findByEventAreaIdAndStatus(areaId, SeatStatus.AVAILABLE)`: Lấy danh sách ghế màu xanh (ghế còn trống).
 * `countByEventAreaIdAndStatus(...)`: Báo cáo tỷ lệ lấp đầy rạp chiếu / sân vận động.

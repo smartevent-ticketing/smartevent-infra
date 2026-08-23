@@ -37,7 +37,7 @@ flowchart TD
 
 ## 🗃️ 2. Lược Đồ Database (`categories`)
 
-Được quản lý bởi Flyway Migration [`V4__event_schema.sql`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/resources/db/migration/V4__event_schema.sql):
+Được quản lý bởi Flyway Migration [`V4__event_schema.sql`](../../ticketing/src/main/resources/db/migration/V4__event_schema.sql):
 
 ```sql
 CREATE TABLE categories (
@@ -85,14 +85,14 @@ modules/event/
   ├── controller/
   │     └── CategoryController.java    ← REST API Endpoints
   └── exception/
-        └── CategoryException.java     ← Exception chuyên biệt cho module
+        └── EventException.java        ← Exception dùng chung cho module event
 ```
 
 ---
 
 ## 📦 4. Chi Tiết Từng Tầng (Layer-by-Layer)
 
-### 🔹 4.1. Entity — [`Category.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/entity/Category.java)
+### 🔹 4.1. Entity — [`Category.java`](../../ticketing/src/main/java/com/smartevent/modules/event/entity/Category.java)
 
 ```java
 @Getter @Setter @NoArgsConstructor
@@ -113,7 +113,7 @@ public class Category extends BaseEntity {
 
 ---
 
-### 🔹 4.2. Repository — [`CategoryRepository.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/repository/CategoryRepository.java)
+### 🔹 4.2. Repository — [`CategoryRepository.java`](../../ticketing/src/main/java/com/smartevent/modules/event/repository/CategoryRepository.java)
 
 ```java
 @Repository
@@ -132,7 +132,7 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
 ### 🔹 4.3. DTOs — Request & Response
 
-#### [`CategoryRequest.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/dto/request/CategoryRequest.java) (Input từ Client)
+#### [`CategoryRequest.java`](../../ticketing/src/main/java/com/smartevent/modules/event/dto/request/CategoryRequest.java) (Input từ Client)
 
 ```java
 public record CategoryRequest(
@@ -144,7 +144,7 @@ public record CategoryRequest(
 * Client **không gửi `slug`** → Server tự động sinh slug từ `name` bằng thư viện `Slugify`.
 * Client **không gửi `status`** → Mặc định `ACTIVE` khi tạo mới.
 
-#### [`CategoryResponse.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/dto/response/CategoryResponse.java) (Output trả về Client)
+#### [`CategoryResponse.java`](../../ticketing/src/main/java/com/smartevent/modules/event/dto/response/CategoryResponse.java) (Output trả về Client)
 
 ```java
 public record CategoryResponse(UUID id, String name, String slug, String description,
@@ -159,7 +159,7 @@ public record CategoryResponse(UUID id, String name, String slug, String descrip
 
 ### 🔹 4.4. Service Layer — Logic Nghiệp Vụ Chi Tiết
 
-#### Interface — [`CategoryService.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/service/CategoryService.java)
+#### Interface — [`CategoryService.java`](../../ticketing/src/main/java/com/smartevent/modules/event/service/CategoryService.java)
 
 ```java
 public interface CategoryService {
@@ -171,7 +171,7 @@ public interface CategoryService {
 }
 ```
 
-#### Implementation — [`CategoryServiceImpl.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/service/impl/CategoryServiceImpl.java)
+#### Implementation — [`CategoryServiceImpl.java`](../../ticketing/src/main/java/com/smartevent/modules/event/service/impl/CategoryServiceImpl.java)
 
 **Dependencies:**
 ```java
@@ -249,7 +249,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 ---
 
-### 🔹 4.5. Controller — [`CategoryController.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/controller/CategoryController.java)
+### 🔹 4.5. Controller — [`CategoryController.java`](../../ticketing/src/main/java/com/smartevent/modules/event/controller/CategoryController.java)
 
 ```java
 @RestController
@@ -309,7 +309,7 @@ public class CategoryController {
 
 ## 🔐 6. Cấu Hình Bảo Mật (SecurityConfig)
 
-Trong [`SecurityConfig.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/config/SecurityConfig.java), endpoint GET được mở công khai:
+Trong [`SecurityConfig.java`](../../ticketing/src/main/java/com/smartevent/config/SecurityConfig.java), endpoint GET được mở công khai:
 
 ```java
 .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
@@ -320,12 +320,12 @@ Trong [`SecurityConfig.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ti
 
 ---
 
-## ⚠️ 7. Exception Handling — [`CategoryException.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/exception/CategoryException.java)
+## ⚠️ 7. Exception Handling — [`EventException.java`](../../ticketing/src/main/java/com/smartevent/modules/event/exception/EventException.java)
 
 ```java
-public class CategoryException extends BusinessException {
-    public CategoryException(ErrorCode errorCode) { super(errorCode); }
-    public CategoryException(ErrorCode errorCode, String detail) { super(errorCode, detail); }
+public class EventException extends BusinessException {
+    public EventException(ErrorCode errorCode) { super(errorCode); }
+    public EventException(ErrorCode errorCode, String detail) { super(errorCode, detail); }
 }
 ```
 

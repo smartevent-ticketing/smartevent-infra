@@ -30,7 +30,7 @@ Khi được chuyển hướng sang giao diện thanh toán VNPay Sandbox, chọ
 
 ## 🔑 3. Cấu Hình Biến Môi Trường Mẫu (`.env.example`)
 
-Toàn bộ các biến cấu hình cho 4 cổng thanh toán được đặt trong file template [`.env.example`](file:///d:/Smart%20Event%20Ticketing%20Platform/.env.example):
+Toàn bộ các biến cấu hình cho 4 cổng thanh toán được đặt trong file template [`.env.example`](../../.env.example):
 
 ```properties
 # ==============================================================================

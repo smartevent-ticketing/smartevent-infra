@@ -1,6 +1,8 @@
 # 🏛️ MASTER ARCHITECTURE: BẢN TỔNG HỢP CÁC KỸ THUẬT XỬ LÝ & GIẢI PHÁP CÔNG NGHỆ CỐT LÕI
 ## (COMPREHENSIVE HIGH-CONCURRENCY, DATA INTEGRITY & DISTRIBUTED ENGINEERING BLUEPRINT)
 
+> **Trạng thái tài liệu:** tài liệu giải thích/legacy. Một số con số hiệu năng và tuyên bố tuyệt đối bên dưới là mục tiêu thiết kế, chưa phải kết quả benchmark. Khi có khác biệt, ưu tiên [kiến trúc hiện hành](../01-architecture/system-architecture.md), [critical flows](../01-architecture/critical-flows.md) và [known limitations](../03-quality/known-limitations.md).
+
 **Hệ thống:** Smart Event Ticketing Platform · Nền Tảng Bán Vé Sự Kiện Quy Mô Lớn  
 **Tác giả:** Backend Engineering Team  
 **Mục tiêu:** Tài liệu giải trình toàn diện về các giải pháp kỹ thuật, mẫu thiết kế (Design Patterns), cơ chế bảo mật mật mã học, và chiến lược xử lý đồng thời (High-Concurrency) được áp dụng trên toàn bộ hệ thống từ Module 1 đến Module 8.

@@ -46,7 +46,7 @@ flowchart TD
 
 ## 🗃️ 2. Lược Đồ Database (`ticket_sale_phases` & `ticket_phase_rules`)
 
-Được định nghĩa trong Flyway Migration [`V5__ticketing_schema.sql`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/resources/db/migration/V5__ticketing_schema.sql):
+Được định nghĩa trong Flyway Migration [`V5__ticketing_schema.sql`](../../ticketing/src/main/resources/db/migration/V5__ticketing_schema.sql):
 
 ```sql
 -- 1. Bảng Đợt Mở Bán
@@ -123,8 +123,8 @@ src/test/java/com/smartevent/modules/ticketing/service/
 ## 📦 4. Chi Tiết Từng Tầng (Layer-by-Layer)
 
 ### 🔹 4.1. Entity Design
-- **[`TicketSalePhase.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/modules/ticketing/entity/TicketSalePhase.java):** Kế thừa `BaseEntity` (có `id`, `createdAt`, `updatedAt`). Quản lý giá tiền (`BigDecimal`), số lượng (`Integer`), khung giờ mở bán (`Instant`), giới hạn mua (`maxPerOrder`, `maxPerUser`) và trạng thái (`SalePhaseStatus`).
-- **[`TicketPhaseRule.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/modules/ticketing/entity/TicketPhaseRule.java):** Không kế thừa `BaseEntity` vì lược đồ DB chỉ có `created_at` (bất biến, chỉ thêm hoặc xóa). Sử dụng `@PrePersist` để sinh UUID và timestamp.
+- **[`TicketSalePhase.java`](../../ticketing/src/main/java/com/smartevent/modules/ticketing/entity/TicketSalePhase.java):** Kế thừa `BaseEntity` (có `id`, `createdAt`, `updatedAt`). Quản lý giá tiền (`BigDecimal`), số lượng (`Integer`), khung giờ mở bán (`Instant`), giới hạn mua (`maxPerOrder`, `maxPerUser`) và trạng thái (`SalePhaseStatus`).
+- **[`TicketPhaseRule.java`](../../ticketing/src/main/java/com/smartevent/modules/ticketing/entity/TicketPhaseRule.java):** Không kế thừa `BaseEntity` vì lược đồ DB chỉ có `created_at` (bất biến, chỉ thêm hoặc xóa). Sử dụng `@PrePersist` để sinh UUID và timestamp.
 
 ### 🔹 4.2. Repository Layer
 - **`sumQuantityByEventAreaIdExcluding(UUID eventAreaId, UUID excludePhaseId)`:**  
@@ -157,7 +157,7 @@ src/test/java/com/smartevent/modules/ticketing/service/
 
 ### 🔹 4.4. Controller & Phân Quyền (RBAC)
 - Sử dụng `@PreAuthorize("hasAnyRole('ORGANIZER', 'ADMIN')")` cho các thao tác CUD (Create, Update, Patch, Delete).
-- Mở quyền công khai `GET /api/v1/sale-phases/**` trong [`SecurityConfig.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/config/SecurityConfig.java).
+- Mở quyền công khai `GET /api/v1/sale-phases/**` trong [`SecurityConfig.java`](../../ticketing/src/main/java/com/smartevent/config/SecurityConfig.java).
 
 ---
 
@@ -218,7 +218,7 @@ src/test/java/com/smartevent/modules/ticketing/service/
 
 ## 🧪 6. Kết Quả Kiểm Thử Unit Test (Mockito 100%)
 
-Toàn bộ **10 Test Cases** trong [`TicketSalePhaseServiceTest.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/test/java/com/smartevent/modules/ticketing/service/TicketSalePhaseServiceTest.java) đều đạt kết quả **PASSED**:
+Toàn bộ **10 Test Cases** trong [`TicketSalePhaseServiceTest.java`](../../ticketing/src/test/java/com/smartevent/modules/ticketing/service/TicketSalePhaseServiceTest.java) đều đạt kết quả **PASSED**:
 - ✅ `createSalePhase_Success`
 - ✅ `createSalePhase_InvalidTime_ThrowsException`
 - ✅ `createSalePhase_CapacityExceeded_ThrowsException`

@@ -37,7 +37,7 @@ stateDiagram-v2
 
 ## 🗃️ 2. Lược Đồ Database (`events`, `event_categories`, `event_files`)
 
-Được quản lý bởi Flyway Migration [`V4__event_schema.sql`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/resources/db/migration/V4__event_schema.sql):
+Được quản lý bởi Flyway Migration [`V4__event_schema.sql`](../../ticketing/src/main/resources/db/migration/V4__event_schema.sql):
 
 ```sql
 -- 1. Bảng events chính
@@ -120,12 +120,12 @@ modules/event/
 
 ## 📦 4. Chi Tiết Từng Tầng (Layer-by-Layer)
 
-### 🔹 4.1. Entity — [`Event.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/entity/Event.java)
+### 🔹 4.1. Entity — [`Event.java`](../../ticketing/src/main/java/com/smartevent/modules/event/entity/Event.java)
 * Kế thừa `BaseEntity` $\rightarrow$ Tự động có `id` (UUID), `createdAt`, `updatedAt`.
 * Trạng thái ban đầu: `status = EventStatus.DRAFT`.
 * Cấu hình bán lại vé: `resaleEnabled`, `maxResalePriceMultiplier` (ví dụ `1.2` = tối đa 120% giá gốc), `resaleDeadlineHoursBefore` (hạn chót đóng bán lại trước giờ diễn bao nhiêu tiếng).
 
-### 🔹 4.2. Repository — Thuật toán kiểm tra trùng lịch trong [`EventRepository.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/repository/EventRepository.java)
+### 🔹 4.2. Repository — Thuật toán kiểm tra trùng lịch trong [`EventRepository.java`](../../ticketing/src/main/java/com/smartevent/modules/event/repository/EventRepository.java)
 
 ```java
 @Query("""
@@ -149,7 +149,7 @@ boolean hasVenueTimeConflict(
 
 ---
 
-### 🔹 4.3. Service Layer — 10 Nghiệp Vụ Trong [`EventServiceImpl.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/service/impl/EventServiceImpl.java)
+### 🔹 4.3. Service Layer — 10 Nghiệp Vụ Trong [`EventServiceImpl.java`](../../ticketing/src/main/java/com/smartevent/modules/event/service/impl/EventServiceImpl.java)
 
 1. **`toEventResponse(Event event)` (Helper Method):** Gom đồng thời thông tin từ `VenueRepository`, `CategoryRepository`, `EventFileRepository` và trả về `EventResponse.of(...)`.
 2. **`createEvent`:** Validate `startTime < endTime`, `startTime > now`, kiểm tra Venue Conflict, sinh slug bằng `Slugify`, lưu Event nháp (`DRAFT`), lưu danh mục liên kết và danh sách files ảnh.
@@ -165,7 +165,7 @@ boolean hasVenueTimeConflict(
 
 ---
 
-### 🔹 4.4. Controller Layer — [`EventController.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/controller/EventController.java)
+### 🔹 4.4. Controller Layer — [`EventController.java`](../../ticketing/src/main/java/com/smartevent/modules/event/controller/EventController.java)
 
 * Sử dụng `@CurrentUser UserPrincipal currentUser` để lấy danh tính người dùng bảo mật từ Token JWT.
 * Sử dụng `@PreAuthorize` để phân quyền linh hoạt theo từng vai trò (`ROLE_ORGANIZER`, `ROLE_ADMIN`).
@@ -189,7 +189,7 @@ boolean hasVenueTimeConflict(
 
 ---
 
-## 🔐 6. Cấu Hình Bảo Mật ([`SecurityConfig.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/config/SecurityConfig.java))
+## 🔐 6. Cấu Hình Bảo Mật ([`SecurityConfig.java`](../../ticketing/src/main/java/com/smartevent/config/SecurityConfig.java))
 
 ```java
 .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()

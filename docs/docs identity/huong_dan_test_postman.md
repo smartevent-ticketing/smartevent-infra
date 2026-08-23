@@ -2,16 +2,16 @@
 ## Smart Event Ticketing Platform — Module Identity & Authentication
 
 **Ngày tạo:** 16/08/2026  
-**Thư mục chứa file Postman:** [`docs/postman/`](file:///d:/Smart%20Event%20Ticketing%20Platform/docs/postman/)  
+**Thư mục chứa file Postman:** [`docs/postman/`](../postman/)
 
 ---
 
 ## 📥 1. Hướng Dẫn Import Vào Postman
 
-Trong thư mục [`docs/postman/`](file:///d:/Smart%20Event%20Ticketing%20Platform/docs/postman/) đã có sẵn 2 file:
+Trong thư mục [`docs/postman/`](../postman/) đã có sẵn 2 file:
 
-1. 📄 [**`Smart_Event_Ticketing_Auth_Postman_Collection.json`**](file:///d:/Smart%20Event%20Ticketing%20Platform/docs/postman/Smart_Event_Ticketing_Auth_Postman_Collection.json): Chứa toàn bộ các Request và Test Scripts tự động.
-2. 📄 [**`Smart_Event_Ticketing_Local_Environment.json`**](file:///d:/Smart%20Event%20Ticketing%20Platform/docs/postman/Smart_Event_Ticketing_Local_Environment.json): Chứa các biến môi trường (`baseUrl`, `accessToken`, `refreshToken`).
+1. 📄 [**`Smart_Event_Ticketing_Auth_Postman_Collection.json`**](../postman/Smart_Event_Ticketing_Auth_Postman_Collection.json): Chứa toàn bộ các Request và Test Scripts tự động.
+2. 📄 [**`Smart_Event_Ticketing_Local_Environment.json`**](../postman/Smart_Event_Ticketing_Local_Environment.json): Chứa các biến môi trường (`baseUrl`, `accessToken`, `refreshToken`).
 
 ### Các bước Import:
 1. Mở ứng dụng **Postman**.

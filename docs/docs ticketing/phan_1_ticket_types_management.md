@@ -35,7 +35,7 @@ flowchart TD
 
 ## 🗃️ 2. Lược Đồ Database (`ticket_types`)
 
-Được quản lý bởi Flyway Migration [`V5__ticketing_schema.sql`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/resources/db/migration/V5__ticketing_schema.sql):
+Được quản lý bởi Flyway Migration [`V5__ticketing_schema.sql`](../../ticketing/src/main/resources/db/migration/V5__ticketing_schema.sql):
 
 ```sql
 CREATE TABLE ticket_types (
@@ -98,21 +98,21 @@ src/test/java/com/smartevent/modules/ticketing/service/
 
 ## 📦 4. Chi Tiết Từng Tầng (Layer-by-Layer)
 
-### 🔹 4.1. Entity — [`TicketType.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/modules/ticketing/entity/TicketType.java)
+### 🔹 4.1. Entity — [`TicketType.java`](../../ticketing/src/main/java/com/smartevent/modules/ticketing/entity/TicketType.java)
 - Kế thừa `BaseEntity` (tự động có `id`, `createdAt`, `updatedAt`).
 - Dùng **ID Reference** (`UUID eventId`, `UUID eventAreaId`) thay vì `@ManyToOne` để tối ưu hiệu năng và tránh N+1 Query.
 
-### 🔹 4.2. Repository — [`TicketTypeRepository.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/modules/ticketing/repository/TicketTypeRepository.java)
+### 🔹 4.2. Repository — [`TicketTypeRepository.java`](../../ticketing/src/main/java/com/smartevent/modules/ticketing/repository/TicketTypeRepository.java)
 - `findByEventId(UUID eventId)`: Lấy toàn bộ loại vé của sự kiện.
 - `findByEventAreaId(UUID eventAreaId)`: Lấy loại vé theo từng khán đài.
 - `existsByEventIdAndName(UUID eventId, String name)`: Kiểm tra trùng tên loại vé trong cùng 1 sự kiện.
 - `existsByEventAreaId(UUID eventAreaId)`: Kiểm tra xem khán đài đã gắn loại vé nào chưa.
 
 ### 🔹 4.3. DTOs — Request & Response
-- **[`TicketTypeRequest`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/modules/ticketing/dto/request/TicketTypeRequest.java):** Nhận `@NotNull UUID eventAreaId`, `@NotBlank @Size(max = 100) String name`, `description`, `status`. Chặn đứng lỗ hổng Mass Assignment.
-- **[`TicketTypeResponse`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/modules/ticketing/dto/response/TicketTypeResponse.java):** Sử dụng Static Factory Method `of(TicketType ticketType, String areaName, AreaType areaType)` để làm giàu dữ liệu, trả về cả tên khán đài và loại khán đài (`STANDING`/`SEATED`) cho Client hiển thị.
+- **[`TicketTypeRequest`](../../ticketing/src/main/java/com/smartevent/modules/ticketing/dto/request/TicketTypeRequest.java):** Nhận `@NotNull UUID eventAreaId`, `@NotBlank @Size(max = 100) String name`, `description`, `status`. Chặn đứng lỗ hổng Mass Assignment.
+- **[`TicketTypeResponse`](../../ticketing/src/main/java/com/smartevent/modules/ticketing/dto/response/TicketTypeResponse.java):** Sử dụng Static Factory Method `of(TicketType ticketType, String areaName, AreaType areaType)` để làm giàu dữ liệu, trả về cả tên khán đài và loại khán đài (`STANDING`/`SEATED`) cho Client hiển thị.
 
-### 🔹 4.4. Service — [`TicketTypeServiceImpl.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/modules/ticketing/service/impl/TicketTypeServiceImpl.java)
+### 🔹 4.4. Service — [`TicketTypeServiceImpl.java`](../../ticketing/src/main/java/com/smartevent/modules/ticketing/service/impl/TicketTypeServiceImpl.java)
 Tuân thủ nghiêm ngặt **5 bước phòng thủ**:
 1. **Security & Ownership:** Kiểm tra sự kiện tồn tại và `event.organizerId == currentUserId || isAdmin`.
 2. **State Guard:** Chỉ cho phép tạo/sửa/xóa loại vé khi sự kiện đang ở trạng thái `DRAFT` hoặc `PENDING_APPROVAL`. Chặn khi `PUBLISHED` để bảo vệ tính toàn vẹn vé đã bán.
@@ -120,7 +120,7 @@ Tuân thủ nghiêm ngặt **5 bước phòng thủ**:
 4. **Mutation:** Thực hiện lưu/sửa/xóa qua Repository trong `@Transactional`.
 5. **Audit & Delivery:** Ghi nhật ký `@Slf4j` (INFO/WARN) và đóng gói Response DTO.
 
-### 🔹 4.5. Controller — [`TicketTypeController.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/modules/ticketing/controller/TicketTypeController.java)
+### 🔹 4.5. Controller — [`TicketTypeController.java`](../../ticketing/src/main/java/com/smartevent/modules/ticketing/controller/TicketTypeController.java)
 - Áp dụng phân quyền RBAC: `@PreAuthorize("hasAnyRole('ORGANIZER', 'ADMIN')")` cho các thao tác POST, PUT, DELETE.
 - Rút trích an toàn danh tính người dùng qua `@CurrentUser UserPrincipal currentUser`.
 - Kích hoạt Bean Validation với `@Valid @RequestBody`.
@@ -172,7 +172,7 @@ Tuân thủ nghiêm ngặt **5 bước phòng thủ**:
 
 ## 🧪 6. Kết Quả Kiểm Thử Unit Test (Mockito 100%)
 
-Toàn bộ **12 Test Cases** trong [`TicketTypeServiceTest.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/test/java/com/smartevent/modules/ticketing/service/TicketTypeServiceTest.java) đều đạt kết quả **PASSED**:
+Toàn bộ **12 Test Cases** trong [`TicketTypeServiceTest.java`](../../ticketing/src/test/java/com/smartevent/modules/ticketing/service/TicketTypeServiceTest.java) đều đạt kết quả **PASSED**:
 - ✅ `createTicketType_Success`
 - ✅ `createTicketType_Success_WhenAdmin`
 - ✅ `createTicketType_EventNotFound_ThrowsException`

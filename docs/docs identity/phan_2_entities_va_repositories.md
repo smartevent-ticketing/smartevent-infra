@@ -67,7 +67,7 @@ erDiagram
 
 ## 🏛️ 2. Chi Tiết Các Thực Thể JPA (JPA Entities)
 
-### 2.1. [`User.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/identity/entity/User.java) — Thực Thể Người Dùng Trung Tâm
+### 2.1. [`User.java`](../../ticketing/src/main/java/com/smartevent/modules/identity/entity/User.java) — Thực Thể Người Dùng Trung Tâm
 
 * **Kế thừa `SoftDeleteEntity`:** Tự động thừa hưởng `id` (UUID), `createdAt`, `updatedAt` và `deletedAt` cùng các helper methods:
   - `softDelete()`: Đánh dấu `deletedAt = Instant.now()`.
@@ -86,7 +86,7 @@ erDiagram
 
 ---
 
-### 2.2. [`OrganizerProfile.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/identity/entity/OrganizerProfile.java) — Hồ Sơ Ban Tổ Chức Sự Kiện
+### 2.2. [`OrganizerProfile.java`](../../ticketing/src/main/java/com/smartevent/modules/identity/entity/OrganizerProfile.java) — Hồ Sơ Ban Tổ Chức Sự Kiện
 
 * **Kế thừa `BaseEntity`:** Tự động sinh `id` (UUID), `createdAt`, `updatedAt`.
 * **Quan hệ 1:1 Với User:**
@@ -105,7 +105,7 @@ erDiagram
 
 ---
 
-### 2.3. [`RefreshToken.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/identity/entity/RefreshToken.java) — Quản Lý Phiên Đăng Nhập Dài Hạn
+### 2.3. [`RefreshToken.java`](../../ticketing/src/main/java/com/smartevent/modules/identity/entity/RefreshToken.java) — Quản Lý Phiên Đăng Nhập Dài Hạn
 
 * **Cấu trúc bảng theo `V2`:** Bảng `refresh_tokens` trong PostgreSQL không có cột `updated_at`, nên `RefreshToken` quản lý trực tiếp các trường:
   - `@Id @UuidGenerator private UUID id;`
@@ -122,7 +122,7 @@ erDiagram
 
 ---
 
-### 2.4. [`Role.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/identity/entity/Role.java) & [`UserRole.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/identity/entity/UserRole.java) — Bảng Phân Quyền N:N
+### 2.4. [`Role.java`](../../ticketing/src/main/java/com/smartevent/modules/identity/entity/Role.java) & [`UserRole.java`](../../ticketing/src/main/java/com/smartevent/modules/identity/entity/UserRole.java) — Bảng Phân Quyền N:N
 
 * **`Role`:** Chứa tên quyền hạn duy nhất: `CUSTOMER` (Khách mua vé), `ORGANIZER` (Ban tổ chức tạo sự kiện), `ADMIN` (Quản trị viên nền tảng).
 * **`UserRole`:** Bảng trung gian N:N lưu liên kết giữa `User` và `Role`, có `id` riêng và timestamp `createdAt`, `updatedAt`.
@@ -131,7 +131,7 @@ erDiagram
 
 ## 🔍 3. Chi Tiết Tầng Repositories (Spring Data JPA)
 
-### 3.1. [`UserRepository.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/identity/repository/UserRepository.java)
+### 3.1. [`UserRepository.java`](../../ticketing/src/main/java/com/smartevent/modules/identity/repository/UserRepository.java)
 
 ```java
 public interface UserRepository extends JpaRepository<User, UUID> {
@@ -156,7 +156,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
 ---
 
-### 3.2. [`OrganizerProfileRepository.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/identity/repository/OrganizerProfileRepository.java)
+### 3.2. [`OrganizerProfileRepository.java`](../../ticketing/src/main/java/com/smartevent/modules/identity/repository/OrganizerProfileRepository.java)
 
 ```java
 public interface OrganizerProfileRepository extends JpaRepository<OrganizerProfile, UUID> {
@@ -167,7 +167,7 @@ public interface OrganizerProfileRepository extends JpaRepository<OrganizerProfi
 
 ---
 
-### 3.3. [`RefreshTokenRepository.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/identity/repository/RefreshTokenRepository.java)
+### 3.3. [`RefreshTokenRepository.java`](../../ticketing/src/main/java/com/smartevent/modules/identity/repository/RefreshTokenRepository.java)
 
 ```java
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID> {

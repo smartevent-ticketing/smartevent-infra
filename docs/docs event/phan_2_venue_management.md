@@ -37,7 +37,7 @@ flowchart TD
     Controller -->|@Valid + @PreAuthorize| Service["VenueServiceImpl"]
     Service -->|Kiểm tra trùng\nname + city| DupCheck{"existsByNameAndCity?"}
     DupCheck -->|Không trùng| Repository["VenueRepository\nJPA"]
-    DupCheck -->|Trùng| Error["VenueException\nBUSINESS_RULE_VIOLATION"]
+    DupCheck -->|Trùng| Error["EventException\nBUSINESS_RULE_VIOLATION"]
     Repository --> DB[(PostgreSQL\nBảng: venues)]
 ```
 
@@ -45,7 +45,7 @@ flowchart TD
 
 ## 🗃️ 2. Lược Đồ Database (`venues`)
 
-Được quản lý bởi Flyway Migration [`V4__event_schema.sql`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/resources/db/migration/V4__event_schema.sql):
+Được quản lý bởi Flyway Migration [`V4__event_schema.sql`](../../ticketing/src/main/resources/db/migration/V4__event_schema.sql):
 
 ```sql
 CREATE TABLE venues (
@@ -106,14 +106,14 @@ modules/event/
   ├── controller/
   │     └── VenueController.java       ← REST API Endpoints
   └── exception/
-        └── VenueException.java        ← Exception chuyên biệt cho module
+        └── EventException.java        ← Exception dùng chung cho module event
 ```
 
 ---
 
 ## 📦 4. Chi Tiết Từng Tầng (Layer-by-Layer)
 
-### 🔹 4.1. Entity — [`Venue.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/entity/Venue.java)
+### 🔹 4.1. Entity — [`Venue.java`](../../ticketing/src/main/java/com/smartevent/modules/event/entity/Venue.java)
 
 ```java
 @Getter @Setter @NoArgsConstructor
@@ -142,7 +142,7 @@ public class Venue extends BaseEntity {
 
 ---
 
-### 🔹 4.2. Repository — [`VenueRepository.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/repository/VenueRepository.java)
+### 🔹 4.2. Repository — [`VenueRepository.java`](../../ticketing/src/main/java/com/smartevent/modules/event/repository/VenueRepository.java)
 
 ```java
 @Repository
@@ -169,7 +169,7 @@ public interface VenueRepository extends JpaRepository<Venue, UUID> {
 
 ### 🔹 4.3. DTOs — Request & Response
 
-#### [`VenueRequest.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/dto/request/VenueRequest.java) (Input từ Client)
+#### [`VenueRequest.java`](../../ticketing/src/main/java/com/smartevent/modules/event/dto/request/VenueRequest.java) (Input từ Client)
 
 ```java
 public record VenueRequest(
@@ -187,7 +187,7 @@ public record VenueRequest(
 * `capacity` → `@Positive`: Nếu điền thì phải > 0. Nếu không điền (null) thì bỏ qua.
 * `latitude`, `longitude` → Không bắt buộc (một số venue có thể chưa có tọa độ GPS).
 
-#### [`VenueResponse.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/dto/response/VenueResponse.java) (Output trả về Client)
+#### [`VenueResponse.java`](../../ticketing/src/main/java/com/smartevent/modules/event/dto/response/VenueResponse.java) (Output trả về Client)
 
 ```java
 public record VenueResponse(UUID id, String name, String address, String city,
@@ -201,7 +201,7 @@ public record VenueResponse(UUID id, String name, String address, String city,
 
 ### 🔹 4.4. Service Layer — Logic Nghiệp Vụ Chi Tiết
 
-#### Interface — [`VenueService.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/service/VenueService.java)
+#### Interface — [`VenueService.java`](../../ticketing/src/main/java/com/smartevent/modules/event/service/VenueService.java)
 
 ```java
 public interface VenueService {
@@ -218,7 +218,7 @@ public interface VenueService {
 * Venue có thêm 1 phương thức: `getVenuesByCity(String city)` — lọc theo thành phố.
 * Venue tìm bằng `UUID id` thay vì `slug` — vì Venue không cần URL SEO-friendly.
 
-#### Implementation — [`VenueServiceImpl.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/service/impl/VenueServiceImpl.java)
+#### Implementation — [`VenueServiceImpl.java`](../../ticketing/src/main/java/com/smartevent/modules/event/service/impl/VenueServiceImpl.java)
 
 **Dependencies:**
 ```java
@@ -311,7 +311,7 @@ public class VenueServiceImpl implements VenueService {
 
 ---
 
-### 🔹 4.5. Controller — [`VenueController.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/controller/VenueController.java)
+### 🔹 4.5. Controller — [`VenueController.java`](../../ticketing/src/main/java/com/smartevent/modules/event/controller/VenueController.java)
 
 ```java
 @RestController
@@ -392,7 +392,7 @@ public class VenueController {
 
 ## 🔐 6. Cấu Hình Bảo Mật (SecurityConfig)
 
-Trong [`SecurityConfig.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/config/SecurityConfig.java):
+Trong [`SecurityConfig.java`](../../ticketing/src/main/java/com/smartevent/config/SecurityConfig.java):
 
 ```java
 .requestMatchers(HttpMethod.GET, "/api/v1/venues/**").permitAll()
@@ -406,12 +406,12 @@ Trong [`SecurityConfig.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ti
 
 ---
 
-## ⚠️ 7. Exception Handling — [`VenueException.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/modules/event/exception/VenueException.java)
+## ⚠️ 7. Exception Handling — [`EventException.java`](../../ticketing/src/main/java/com/smartevent/modules/event/exception/EventException.java)
 
 ```java
-public class VenueException extends BusinessException {
-    public VenueException(ErrorCode errorCode) { super(errorCode); }
-    public VenueException(ErrorCode errorCode, String detail) { super(errorCode, detail); }
+public class EventException extends BusinessException {
+    public EventException(ErrorCode errorCode) { super(errorCode); }
+    public EventException(ErrorCode errorCode, String detail) { super(errorCode, detail); }
 }
 ```
 

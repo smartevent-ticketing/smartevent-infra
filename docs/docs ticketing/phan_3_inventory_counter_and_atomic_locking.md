@@ -44,7 +44,7 @@ Trong các sự kiện "cháy vé" (Flash Sale Concert ca sĩ nổi tiếng, Tr�
 
 ## 🗃️ 2. Lược Đồ Database (`inventory_counters`)
 
-Được định nghĩa trong Flyway Migration [`V5__ticketing_schema.sql`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/resources/db/migration/V5__ticketing_schema.sql):
+Được định nghĩa trong Flyway Migration [`V5__ticketing_schema.sql`](../../ticketing/src/main/resources/db/migration/V5__ticketing_schema.sql):
 
 ```sql
 CREATE TABLE inventory_counters (
@@ -135,7 +135,7 @@ src/main/java/com/smartevent/modules/ticketing/
 
 ---
 
-### 🔹 4.1. Entity — [`InventoryCounter.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/modules/ticketing/entity/InventoryCounter.java)
+### 🔹 4.1. Entity — [`InventoryCounter.java`](../../ticketing/src/main/java/com/smartevent/modules/ticketing/entity/InventoryCounter.java)
 - Không kế thừa `BaseEntity` vì schema DB chỉ có `updated_at`.
 - Tự động sinh `id` ngẫu nhiên và cập nhật `updatedAt` thông qua lifecycle callback `@PrePersist` & `@PreUpdate`.
 - Cung cấp hàm tiện ích tính toán nhanh:
@@ -147,7 +147,7 @@ src/main/java/com/smartevent/modules/ticketing/
 
 ---
 
-### 🔹 4.2. Repository — [`InventoryCounterRepository.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/modules/ticketing/repository/InventoryCounterRepository.java)
+### 🔹 4.2. Repository — [`InventoryCounterRepository.java`](../../ticketing/src/main/java/com/smartevent/modules/ticketing/repository/InventoryCounterRepository.java)
 Toàn bộ 5 thao tác cập nhật tồn kho đều là **Atomic Conditional Updates**:
 
 ```java
@@ -252,7 +252,7 @@ int atomicUpdateTotalQuantity(@Param("salePhaseId") UUID salePhaseId, @Param("ne
 
 ## 🧪 6. Kết Quả Kiểm Thử Unit Test (Mockito 100%)
 
-Toàn bộ **10 Test Cases** trong [`InventoryServiceTest.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/test/java/com/smartevent/modules/ticketing/service/InventoryServiceTest.java) đều đạt kết quả **PASSED**:
+Toàn bộ **10 Test Cases** trong [`InventoryServiceTest.java`](../../ticketing/src/test/java/com/smartevent/modules/ticketing/service/InventoryServiceTest.java) đều đạt kết quả **PASSED**:
 - ✅ `initCounter_Success`
 - ✅ `initCounter_AlreadyExists_DoesNotDuplicate`
 - ✅ `getCounterBySalePhaseId_Success`

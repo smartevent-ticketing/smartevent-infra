@@ -122,12 +122,12 @@ Ma trận phân quyền trên các Endpoint hệ thống được thiết lập 
 
 Toàn bộ logic bảo mật và nghiệp vụ đã được kiểm thử với 3 bộ test:
 
-### 4.1. [`JwtTokenProviderTest.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/test/java/com/smartevent/ticketing/infrastructure/security/JwtTokenProviderTest.java)
+### 4.1. [`JwtTokenProviderTest.java`](../../ticketing/src/test/java/com/smartevent/infrastructure/security/JwtTokenProviderTest.java)
 - ✅ `shouldGenerateAccessTokenAndExtractClaims`: Sinh Access Token và trích xuất đúng `userId`, `email`, `roles`.
 - ✅ `shouldFailValidationOnTamperedToken`: Phát hiện token bị can thiệp, sửa đổi hoặc sai chữ ký số.
 - ✅ `shouldGenerateAndHashRefreshToken`: Sinh chuỗi 64-byte ngẫu nhiên và băm SHA-256 chính xác 64 ký tự hex.
 
-### 4.2. [`AuthServiceTest.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/test/java/com/smartevent/ticketing/modules/identity/service/AuthServiceTest.java)
+### 4.2. [`AuthServiceTest.java`](../../ticketing/src/test/java/com/smartevent/modules/identity/service/AuthServiceTest.java)
 - ✅ `register_Success`: Đăng ký thành công, gán quyền `CUSTOMER`.
 - ✅ `register_DuplicateEmail_ThrowsException`: Bắt lỗi trùng email `DUPLICATE_EMAIL`.
 - ✅ `login_Success`: Đăng nhập thành công trả về cặp token.
@@ -137,7 +137,7 @@ Toàn bộ logic bảo mật và nghiệp vụ đã được kiểm thử với 
 - ✅ `logout_Success`: Thu hồi token trong database.
 - ✅ `getProfile_Success`: Nạp thông tin hồ sơ User.
 
-### 4.3. [`AuthControllerTest.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/test/java/com/smartevent/ticketing/modules/identity/controller/AuthControllerTest.java)
+### 4.3. [`AuthControllerTest.java`](../../ticketing/src/test/java/com/smartevent/modules/identity/controller/AuthControllerTest.java)
 - ✅ `register_ReturnsSuccess`: MockMvc POST `/register` trả về 200 OK + `ApiResponse<UserResponse>`.
 - ✅ `login_ReturnsSuccess`: MockMvc POST `/login` trả về 200 OK + `ApiResponse<LoginResponse>`.
 - ✅ `refreshToken_ReturnsSuccess`: MockMvc POST `/refresh-token` trả về 200 OK + `ApiResponse<TokenRefreshResponse>`.

@@ -205,7 +205,7 @@ Khi người dùng gửi request đặt vé, `ReservationServiceImpl` thực thi
 
 ## 🧪 7. Kết Quả Kiểm Thử Unit Test (Mockito 100%)
 
-Toàn bộ **13 Test Cases** trong [`ReservationServiceTest.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/test/java/com/smartevent/modules/reservation/service/ReservationServiceTest.java) đều đạt kết quả **PASSED**:
+Toàn bộ **13 Test Cases** trong [`ReservationServiceTest.java`](../../ticketing/src/test/java/com/smartevent/modules/reservation/service/ReservationServiceTest.java) đều đạt kết quả **PASSED**:
 - ✅ `createReservation_Standing_Success`
 - ✅ `createReservation_Seated_Success`
 - ✅ `createReservation_IdempotencyKey_ReturnsExisting`

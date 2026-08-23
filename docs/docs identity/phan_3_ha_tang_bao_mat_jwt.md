@@ -9,7 +9,7 @@
 
 ## 🧭 1. Tổng Quan Kiến Trúc Dây Chuyền An Ninh JWT
 
-Hệ thống sử dụng cơ chế **Stateless Authentication** thông qua chuỗi kiểm soát gồm 6 thành phần cốt lõi tại gói [`infrastructure/security`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/infrastructure/security/):
+Hệ thống sử dụng cơ chế **Stateless Authentication** thông qua chuỗi kiểm soát gồm 6 thành phần cốt lõi tại gói [`infrastructure/security`](../../ticketing/src/main/java/com/smartevent/infrastructure/security/):
 
 ```mermaid
 flowchart TD
@@ -32,7 +32,7 @@ flowchart TD
 
 ## 🔍 2. Chi Tiết Các Thành Phần Hạ Tầng Đã Triển Khai
 
-### 2.1. [`UserPrincipal.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/infrastructure/security/UserPrincipal.java) — Chiếc Cầu Nối Giữa JPA User Và Spring Security
+### 2.1. [`UserPrincipal.java`](../../ticketing/src/main/java/com/smartevent/infrastructure/security/UserPrincipal.java) — Chiếc Cầu Nối Giữa JPA User Và Spring Security
 
 * **Mẫu thiết kế (Adapter Pattern):** Đóng gói dữ liệu của Entity `User` thành `UserDetails` để Spring Security nhận diện.
 * **Cấu trúc trường:**
@@ -60,7 +60,7 @@ flowchart TD
 
 ---
 
-### 2.2. [`CustomUserDetailsService.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/infrastructure/security/CustomUserDetailsService.java) — Nạp Dữ Liệu Tài Khoản Cho Authentication Manager
+### 2.2. [`CustomUserDetailsService.java`](../../ticketing/src/main/java/com/smartevent/infrastructure/security/CustomUserDetailsService.java) — Nạp Dữ Liệu Tài Khoản Cho Authentication Manager
 
 * **Bản chất:** Triển khai `UserDetailsService` để nạp User từ PostgreSQL:
   ```java
@@ -76,7 +76,7 @@ flowchart TD
 
 ---
 
-### 2.3. [`JwtTokenProvider.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/infrastructure/security/JwtTokenProvider.java) — Động Cơ Ký & Kiểm Tra Token (JJWT 0.12.6)
+### 2.3. [`JwtTokenProvider.java`](../../ticketing/src/main/java/com/smartevent/infrastructure/security/JwtTokenProvider.java) — Động Cơ Ký & Kiểm Tra Token (JJWT 0.12.6)
 
 * **1. Quản lý Secret Key (`getSigningKey`):**
   - Hỗ trợ cả chuỗi Base64 và UTF-8 raw bytes.
@@ -97,7 +97,7 @@ flowchart TD
 
 ---
 
-### 2.4. [`JwtAuthenticationFilter.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/infrastructure/security/JwtAuthenticationFilter.java) — Trạm Kiểm Soát Từng Request
+### 2.4. [`JwtAuthenticationFilter.java`](../../ticketing/src/main/java/com/smartevent/infrastructure/security/JwtAuthenticationFilter.java) — Trạm Kiểm Soát Từng Request
 
 * **Bản chất:** Kế thừa `OncePerRequestFilter` đảm bảo filter chỉ kích hoạt duy nhất 1 lần trên mỗi chu trình HTTP Request.
 * **Luồng xử lý (Filter Pipeline):**
@@ -113,7 +113,7 @@ flowchart TD
 
 Khi xảy ra lỗi bảo mật ở tầng Filter, các ngoại lệ không đi vào `GlobalExceptionHandler` bình thường vì Filter nằm trước `DispatcherServlet`. Hai Handler sau đây giải quyết triệt để vấn đề này:
 
-#### 1. [`JwtAuthenticationEntryPoint.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/infrastructure/security/JwtAuthenticationEntryPoint.java) (HTTP 401 UNAUTHORIZED)
+#### 1. [`JwtAuthenticationEntryPoint.java`](../../ticketing/src/main/java/com/smartevent/infrastructure/security/JwtAuthenticationEntryPoint.java) (HTTP 401 UNAUTHORIZED)
 - Kích hoạt khi Client **chưa đăng nhập** hoặc truyền token không hợp lệ / hết hạn.
 - Ghi thẳng đối tượng JSON `ErrorResponse` vào Response Stream:
   ```json
@@ -126,7 +126,7 @@ Khi xảy ra lỗi bảo mật ở tầng Filter, các ngoại lệ không đi v
   }
   ```
 
-#### 2. [`JwtAccessDeniedHandler.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/infrastructure/security/JwtAccessDeniedHandler.java) (HTTP 403 FORBIDDEN)
+#### 2. [`JwtAccessDeniedHandler.java`](../../ticketing/src/main/java/com/smartevent/infrastructure/security/JwtAccessDeniedHandler.java) (HTTP 403 FORBIDDEN)
 - Kích hoạt khi Client đã đăng nhập nhưng **không có đủ quyền hạn Role** truy cập tài nguyên (ví dụ: tài khoản `CUSTOMER` gọi API `/api/v1/admin/venues`).
 - Ghi đối tượng JSON `ErrorResponse` HTTP 403:
   ```json
@@ -141,7 +141,7 @@ Khi xảy ra lỗi bảo mật ở tầng Filter, các ngoại lệ không đi v
 
 ---
 
-### 2.6. Cải Tiến [`SecurityUtils.java`](file:///d:/Smart%20Event%20Ticketing%20Platform/ticketing/src/main/java/com/smartevent/ticketing/common/security/SecurityUtils.java)
+### 2.6. Cải Tiến [`SecurityUtils.java`](../../ticketing/src/main/java/com/smartevent/common/security/SecurityUtils.java)
 
 * **Khắc phục lỗi trích xuất ID:** Khi `auth.getPrincipal()` là `UserPrincipal`, `auth.getName()` trả về email chứ không phải UUID.
 * **Cơ chế mới:**
