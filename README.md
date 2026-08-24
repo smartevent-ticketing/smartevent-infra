@@ -1,95 +1,83 @@
-# Smart Event Ticketing Platform
+# Smart Event Ticketing Platform — Infrastructure
 
-Backend bán vé sự kiện được xây dựng theo kiến trúc modular monolith bằng Java 17 và Spring Boot. Đây là **đồ án môn học**; Phase 1 tập trung chứng minh luồng bán vé end-to-end, tính nhất quán dữ liệu và xử lý tranh chấp ở các điểm quan trọng.
+Repository này quản lý hạ tầng dùng chung cho môi trường phát triển local của Smart Event Ticketing Platform. Mã nguồn ứng dụng không nằm trong repository này.
 
-## Trạng thái hiện tại
+## Hệ thống ba repository
 
-**Phase 1 – Core Ticketing: hoàn thành ở mức đồ án.**
-
-Snapshot được đối chiếu ngày 23/08/2026:
-
-- 19 REST controller, 89 endpoint mapping.
-- 12 Flyway migration (`V1` đến `V12`).
-- 146/146 test pass, không failure/error/skipped theo báo cáo Gradle gần nhất.
-- Luồng chính: đăng nhập → tạo/publish sự kiện → cấu hình vé → giữ chỗ → tạo đơn → thanh toán sandbox → phát hành vé/QR → hóa đơn PDF/email → check-in.
-
-Kết luận này **không đồng nghĩa production-ready**. Các việc như publisher confirms, consumer idempotency đầy đủ, kiểm tra nội dung file bằng magic bytes, load test, Testcontainers, rate limiting, CI/CD và backup/restore còn là bước nâng cấp tiếp theo.
-
-## Kiến trúc
-
-```mermaid
-flowchart LR
-    Client[Web / Mobile / Scanner] --> API[Spring Boot REST API]
-    API --> DB[(PostgreSQL)]
-    API --> Redis[(Redis)]
-    API --> MinIO[(MinIO)]
-    API --> Outbox[(outbox_events)]
-    Outbox --> Publisher[Outbox publisher]
-    Publisher --> Rabbit[RabbitMQ]
-    Rabbit --> Consumer[Notification consumer]
-    Consumer --> SMTP[SMTP]
-```
-
-PostgreSQL là nguồn dữ liệu chuẩn. Redis hỗ trợ counter/cache, MinIO lưu file, còn RabbitMQ tách việc gửi thông báo khỏi transaction nghiệp vụ. Transactional Outbox giảm rủi ro dual-write; delivery hiện có semantics **at-least-once**, vì vậy duplicate vẫn phải được tính đến.
-
-Các cơ chế quan trọng đã triển khai:
-
-- Atomic compare-and-set cho `AVAILABLE → HELD`, `PENDING → CONFIRMED/EXPIRED` và `ISSUED → USED`.
-- Worker giải phóng reservation/order hết hạn mỗi 30 giây.
-- Late payment được ghi nhận `Payment.SUCCESS`, hủy order và đưa sang đối soát hoàn tiền thay vì rollback webhook.
-- Hóa đơn PDF và email chạy bất đồng bộ qua Outbox/RabbitMQ; retry hữu hạn và DLQ cho lỗi consumer.
-- JWT stateless, RBAC, kiểm tra quyền trên tài nguyên sự kiện và chặn truy cập công khai event chưa publish.
-
-Xem [tổng quan kiến trúc](docs/01-architecture/system-architecture.md) và [các luồng giao dịch trọng yếu](docs/01-architecture/critical-flows.md).
-
-## Công nghệ
-
-| Nhóm | Công nghệ |
+| Repository | Trách nhiệm |
 |---|---|
-| Runtime | Java 17, Spring Boot 4.0.7, Gradle |
-| API & security | Spring WebMVC, Spring Security, JWT, OpenAPI/Swagger |
-| Data | PostgreSQL 16, Spring Data JPA, Flyway |
-| Cache/counter | Redis 7 |
-| Messaging | RabbitMQ, Transactional Outbox, retry/DLQ |
-| Storage | MinIO, presigned URL |
-| Document/media | OpenPDF, ZXing, Spring Mail |
-| Testing | JUnit 5, Mockito, Spring test starters |
+| [smartevent-backend](https://github.com/smartevent-ticketing/smartevent-backend) | Spring Boot API, nghiệp vụ, Flyway migration, test backend và tài liệu module |
+| [smartevent-web](https://github.com/smartevent-ticketing/smartevent-web) | Next.js UI, client API, UX và test frontend |
+| [smartevent-infra](https://github.com/smartevent-ticketing/smartevent-infra) | Docker Compose, PostgreSQL, Redis, RabbitMQ, MinIO và runbook local |
 
-## Chạy cục bộ
+Nguyên tắc quan trọng: Flyway migration trong backend là nguồn chuẩn duy nhất của database schema. Infra chỉ cấp PostgreSQL rỗng và không tự chạy `init_schema.sql`.
 
-Yêu cầu: JDK 17 và Docker Desktop/Docker Compose.
+## Khởi động nhanh
+
+Yêu cầu: Docker Desktop hoặc Docker Engine có Docker Compose.
 
 ```bash
 cp .env.example .env
 docker compose up -d
-cd ticketing
-./gradlew test
-./gradlew bootRun
+docker compose ps
 ```
 
-Trên Windows, dùng `copy .env.example .env` và `gradlew.bat` thay cho các lệnh tương ứng. File `.env` được Docker Compose đọc; tiến trình Spring Boot vẫn cần nhận các biến môi trường qua shell hoặc cấu hình Run/Debug của IDE.
+Trên Windows PowerShell:
 
-Sau khi ứng dụng chạy:
+```powershell
+Copy-Item .env.example .env
+docker compose up -d
+docker compose ps
+```
 
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
-- Health: `http://localhost:8080/actuator/health`
-- RabbitMQ UI: `http://localhost:15672`
-- MinIO Console: `http://localhost:9001`
+Đổi các giá trị `change_me_local` trong `.env` trước khi chạy. File `.env` chỉ dùng local và đã bị Git bỏ qua.
 
-Hướng dẫn chi tiết: [Local development](docs/02-operations/local-development.md).
+## Dịch vụ local
+
+| Dịch vụ | Địa chỉ mặc định | Dữ liệu bền vững |
+|---|---|---|
+| PostgreSQL | `localhost:5432` | `smartevent-postgres-data` |
+| Redis | `localhost:6379` | `smartevent-redis-data` |
+| RabbitMQ AMQP | `localhost:5672` | `smartevent-rabbitmq-data` |
+| RabbitMQ UI | `http://localhost:15672` | dùng tài khoản trong `.env` |
+| MinIO API | `http://localhost:9000` | `smartevent-minio-data` |
+| MinIO Console | `http://localhost:9001` | dùng tài khoản trong `.env` |
+
+Các port mặc định chỉ bind vào `127.0.0.1`, tránh vô tình mở database và trang quản trị ra mạng LAN. Có thể đổi port trong `.env` khi máy đã có dịch vụ khác sử dụng.
+
+## Kết nối backend
+
+Backend chạy trực tiếp trên máy dùng các host `localhost`. Các giá trị database, RabbitMQ và MinIO trong `smartevent-backend/.env` phải khớp với file `.env` của infra.
+
+Nếu sau này backend chạy bằng container, attach container vào network `smartevent-network` và dùng hostname `postgres`, `redis`, `rabbitmq`, `minio` thay cho `localhost`.
+
+## Lệnh vận hành
+
+```bash
+# Xem trạng thái và health check
+docker compose ps
+
+# Xem log một dịch vụ
+docker compose logs -f postgres
+
+# Dừng nhưng giữ dữ liệu
+docker compose down
+
+# Cập nhật image rồi khởi động lại
+docker compose pull
+docker compose up -d
+```
+
+`docker compose down -v` xóa toàn bộ volume local. Chỉ dùng khi chủ động muốn reset dữ liệu và đã sao lưu phần cần giữ.
 
 ## Tài liệu
 
-Điểm bắt đầu duy nhất là [docs/README.md](docs/README.md). Tại đây có các lộ trình đọc theo nhu cầu:
+- [Ranh giới và cách phối hợp ba repository](docs/infra/repository-boundaries.md)
+- [Thiết lập môi trường local](docs/infra/local-development.md)
+- [Runbook hạ tầng local](docs/infra/operations-runbook.md)
 
-- đánh giá Phase 1;
-- hiểu kiến trúc và các quyết định kỹ thuật;
-- chạy/demo hệ thống;
-- kiểm thử, bảo mật và theo dõi rủi ro;
-- tra cứu tài liệu chi tiết của từng module.
+Tài liệu nghiệp vụ, kiến trúc backend và báo cáo Phase 1 được duy trì tại `smartevent-backend/docs`.
 
-Tài liệu đặc tả gốc và các hướng dẫn module cũ được giữ nguyên như nguồn tham khảo; tài liệu mới trong `00-overview`, `01-architecture`, `02-operations` và `03-quality` là lớp điều hướng và trạng thái hiện hành.
+## Phạm vi
 
-## Tác giả
-
-Trịnh Đăng Huy — [GitHub](https://github.com/trinhdanghuy-tech)
+Cấu hình này phục vụ development/demo của đồ án, chưa phải cấu hình production. Production cần thêm secret manager, TLS, backup tự động, monitoring/alerting, giới hạn tài nguyên, high availability và quy trình phục hồi đã diễn tập.

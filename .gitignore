@@ -30,3 +30,14 @@ Thumbs.db
 
 # Docker local
 *.pid
+
+# Legacy monorepo working directories are intentionally excluded from infra.
+/ticketing/
+/web/
+
+# Backend documentation and monolith artifacts retained locally after the split.
+/docs/*
+!/docs/infra/
+!/docs/infra/**
+/init/init_schema.sql
+/sample_invoice.pdf
