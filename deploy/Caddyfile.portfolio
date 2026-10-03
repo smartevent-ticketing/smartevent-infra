@@ -1,0 +1,5 @@
+{$PORTFOLIO_DOMAIN} {
+    root * /srv/portfolio
+    encode zstd gzip
+    file_server
+}

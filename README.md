@@ -72,6 +72,9 @@ docker compose up -d
 
 ## Tài liệu
 
+- [Học cấu hình infra trên Windows: từng bước và so sánh với VPS](docs/infra/learning-local.md)
+- [Chuẩn bị bản demo trên một VPS](deploy/README.md)
+
 - [Ranh giới và cách phối hợp ba repository](docs/infra/repository-boundaries.md)
 - [Thiết lập môi trường local](docs/infra/local-development.md)
 - [Runbook hạ tầng local](docs/infra/operations-runbook.md)
