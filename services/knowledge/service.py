@@ -105,6 +105,7 @@ class HybridRetriever:
             or record.get("release_id") != self.artifacts.release_id
             or record.get("embedding_profile") != self.artifacts.embedding_profile
             or record.get("mode") != mode
+            or record.get("retriever_contract") != "dense-qualified-rrf-v1"
         ):
             raise KnowledgeError("Retrieval mode lacks matching evaluation evidence")
         embedder = encoder()
@@ -135,7 +136,7 @@ class HybridRetriever:
             ).fetchall()
         dense = [row[0] for row in rows]
         ids = (
-            dense if mode == "vector" else fuse(([c.chunk_id for c in lexical], dense))
+            dense if mode == "vector" else fuse(([c.chunk_id for c in lexical if c.chunk_id in dense], dense))
         )
         return tuple(allowed[key] for key in ids[:limit])
 

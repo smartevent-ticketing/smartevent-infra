@@ -10,6 +10,51 @@ def test_rrf_combines_rankings_with_deterministic_ties():
     assert fuse(([], [])) == []
 
 
+def test_incidental_keyword_match_cannot_bypass_dense_abstention(monkeypatch, tmp_path):
+    import json
+    from contextlib import contextmanager
+    from types import SimpleNamespace
+    import service
+    from smartevent_ai.domain.knowledge import digest, fingerprint
+
+    profile = {"model": "TEST_ONLY"}
+    artifacts = SimpleNamespace(release_id="TEST_ONLY", embedding_profile=fingerprint(profile), index_id="TEST_ONLY_INDEX")
+    record = {"status": "PASS", "release_id": artifacts.release_id, "embedding_profile": artifacts.embedding_profile, "mode": "hybrid", "retriever_contract": "dense-qualified-rrf-v1", "minimum_similarity": 0.8}
+    path = tmp_path / "evaluation.json"
+    path.write_text(json.dumps(record))
+    monkeypatch.setenv("RETRIEVAL_MODE", "hybrid")
+    monkeypatch.setenv("RETRIEVAL_EVALUATION_PATH", str(path))
+    monkeypatch.setenv("RETRIEVAL_EVALUATION_SHA256", digest(path.read_bytes()))
+    chunk = SimpleNamespace(chunk_id="lexical-only")
+
+    class Lexical:
+        def rank(self, query, chunks, limit):
+            return chunks
+
+    class Encoder:
+        def embed(self, text, query_flag=False, **kwargs):
+            return (1.0, 0.0)
+
+    encoder = Encoder()
+    encoder.profile = profile
+
+    class Connection:
+        def execute(self, *args):
+            return self
+
+        def fetchall(self):
+            return []  # No vector candidate meets the calibrated threshold.
+
+    @contextmanager
+    def connect():
+        yield Connection()
+
+    monkeypatch.setattr(service, "connect", connect)
+    monkeypatch.setattr(service, "encoder", lambda: encoder)
+    monkeypatch.setattr(service, "BM25Retriever", Lexical)
+    assert HybridRetriever(artifacts).rank("công thức nấu phở", (chunk,), 1) == ()
+
+
 def test_service_requires_configured_server_token(monkeypatch):
     monkeypatch.setenv("KNOWLEDGE_SERVICE_TOKEN", "TEST_ONLY_" * 4)
     with pytest.raises(HTTPException):
